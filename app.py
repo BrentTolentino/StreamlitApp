@@ -1,11 +1,11 @@
 import streamlit as st
 import datetime
+import urllib.parse
 import io
 import textwrap
 
 st.set_page_config(page_title="Brent Tolentino — Portfolio", layout="wide")
-
-# Inject custom dark theme with green (#66a04c) accents
+# Custom CSS for fonts and dark mode
 st.markdown(
     """
     <style>
@@ -141,7 +141,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------- Helper data (pre-filled from your conversations) ----------
 USER = {
     "full_name": "Brent Tolentino",
     "handle": "renthehuman",
@@ -151,8 +150,8 @@ USER = {
         "I work on game development, android development, web apps (Django, Spring Boot), experiment with virtualization and GPU passthrough on Linux, "
         "and enjoy debugging hardware/software issues such as Wi‑Fi drivers and system services(on my spare time)."
     ),
-    "email": "johndoe@gmail.com",
-    "avatar": None,  # leave None so user can upload
+    "email": "youremail@gmail.com",
+    "avatar": None,  # user can upload
 }
 
 SKILLS = [
@@ -177,7 +176,6 @@ EXTRA = {
     "interests": ["OS internals", "virtualization", "web development", "system reliability", "open source software", "gaming"],
 }
 
-# ----------------- UI -----------------
 
 with st.sidebar:
     st.image("https://static.streamlit.io/examples/dice.jpg", width=120)
@@ -191,7 +189,6 @@ with st.sidebar:
 
     st.markdown("**Quick actions**")
     if st.button("Download resume (MD)"):
-        # generate a simple markdown resume and trigger download
         md = textwrap.dedent(f"""
         # {USER['full_name']}
         @{USER['handle']} — {USER['location']}
@@ -210,7 +207,7 @@ with st.sidebar:
         st.download_button("Click to download", data=md.encode('utf-8'), file_name="resume.md", mime="text/markdown")
 
     st.markdown("---")
-    st.markdown("Built with Streamlit — edit this app to personalize it.")
+    st.markdown("Built with Streamlit —")
 
 # main layout
 col1, col2 = st.columns([2, 1])
@@ -234,27 +231,6 @@ with col1:
             st.write("Tags: ", ', '.join(p['tags']))
         if p['link']:
             st.markdown(f"[Project link]({p['link']})")
-        st.markdown("---")
-
-    st.subheader("Technical notes & logs")
-    st.info(
-        "I keep short entries here about kernel logs, virtualization experiments (vfio, OVMF), and troubleshooting steps. "
-        "Drop in dmesg excerpts or paste notes for quick reference."
-    )
-    logs = st.text_area("Paste debugging notes or dmesg excerpts", height=140)
-
-    st.markdown("---")
-    st.subheader("Share / Export")
-    export_md = st.checkbox("Include biography & projects in export (Markdown)", value=True)
-    if st.checkbox("Generate shareable profile link (query params)"):
-        # create a simple shareable query param string
-        params = {
-            "name": USER['full_name'].replace(' ', '+'),
-            "bio": bio_text[:200].replace('\n', ' ')
-        }
-        query = f"?name={params['name']}&bio={params['bio']}"
-        st.write("Shareable URL fragment:")
-        st.code(query)
 
 with col2:
     st.subheader("Profile")
@@ -284,14 +260,14 @@ with col2:
             st.markdown(f"[Click to open email client]({mailto})")
         else:
             st.warning("Please put your contact email first.")
+        if email:
+            subj = urllib.parse.quote(subject or "")
+            body = urllib.parse.quote("Hi,\n\nI found your portfolio and would like to get in touch.\n\n—")
+            mailto = f"mailto:{email}?subject={subj}&body={body}"
+            st.markdown(f"[Open email client]({mailto})")
+        else:
+            st.warning("Please put the contact email first.")
 
-    st.markdown("---")
-    st.subheader("Utilities")
-    if st.button("Generate short CV (one‑page markdown)"):
-        cv = generate_cv(USER, SKILLS, PROJECTS, bio_text)
-        st.download_button("Download CV (MD)", data=cv.encode('utf-8'), file_name="cv.md", mime="text/markdown")
-
-# ---------- functions ----------
 
 def generate_cv(user, skills, projects, bio):
     """Return a simple markdown CV string."""
@@ -307,8 +283,6 @@ def generate_cv(user, skills, projects, bio):
         md.append(f"- **{p['title']}** — {p['summary']}")
     return '\n\n'.join(md)
 
-# Small footer
+# footer
 st.markdown("---")
 st.caption(f"Generated: {datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}")
-
-# End of file
