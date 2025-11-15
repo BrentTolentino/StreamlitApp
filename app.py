@@ -9,6 +9,20 @@ st.set_page_config(page_title="Brent Tolentino — Portfolio", layout="wide")
 st.markdown(
     """
     <style>
+    /* Import fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600&display=swap');
+
+    /* Base font for all text */
+    * {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    /* Headers use Bebas Neue */
+    h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        font-family: 'Bebas Neue', sans-serif !important;
+        font-weight: 600 !important;
+        letter-spacing: 1px;
+    }
     body, .stApp {
         background-color: #0f0f0f !important;
         color: #e0e0e0 !important;
@@ -31,11 +45,13 @@ st.markdown(
         color: #e0e0e0 !important;
         border: 1px solid #66a04c !important;
     }
+    
     /* Sidebar background + text */
     [data-testid="stSidebar"], .css-1lcbmhc, .css-1avcm0n, .css-1d2xq0k {
         background-color: #0f0f0f !important;
         color: #e0e0e0 !important;
     }
+    
     [data-testid="stSidebar"] * {
         color: #e0e0e0 !important;
     }
@@ -49,9 +65,75 @@ st.markdown(
         border: 1px solid #66a04c !important;
     }
 
+    [data-testid="collapsedControl"] svg {
+        fill: #e0e0e0 !important;
+    }
+
     [data-testid="stSidebar"] button {
         background-color: #66a04c !important;
         color: black !important;
+    }
+
+        /* Top header / Toolbar (main menu + settings) */
+    [data-testid="stHeader"], header, .css-18ni7ap, .css-1rs6os {
+        background-color: #0f0f0f !important;
+        color: #e0e0e0 !important;
+    }
+
+    /* Remove Streamlit default shadow on header */
+    [data-testid="stHeader"] {
+        box-shadow: none !important;
+    }
+
+    /* Top bar text/icons */
+    [data-testid="stHeader"] * {
+        color: #e0e0e0 !important;
+    }
+
+        /* Global text inputs, text areas, select boxes */
+    input[type="text"], textarea, select, .stTextInput > div > div > input {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+        border: 1px solid #66a04c !important;
+    }
+
+    /* Streamlit new class names for text areas & inputs */
+    [data-baseweb="textarea"], [data-baseweb="input"] {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+        border: 1px solid #66a04c !important;
+    }
+
+    /* Adjust placeholder text color */
+    ::placeholder {
+        color: #aaaaaa !important;
+        opacity: 0.7 !important;
+    }
+
+    /* FILE UPLOADER (dark mode fix) */
+    [data-testid="stFileUploader"] > section > div {
+        background-color: #1a1a1a !important;  /* background of the box */
+        border: 1px solid #2a2a2a !important;
+        color: white !important;
+        border-radius: 8px !important;
+    }
+
+    /* Text inside uploader */
+    [data-testid="stFileUploader"] * {
+        color: white !important;
+    }
+
+    /* Drag-and-drop area */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: #1a1a1a !important;
+        border: 2px dashed #3cb371 !important;  /* your green accent */
+        border-radius: 10px !important;
+    }
+
+    /* Hover effect */
+    [data-testid="stFileUploaderDropzone"]:hover {
+        border-color: #46d48d !important;
+        background-color: #1f1f1f !important;
     }
 
     </style>
@@ -59,17 +141,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ---------- Helper data (pre-filled from your conversations) ----------
 USER = {
     "full_name": "Brent Tolentino",
     "handle": "renthehuman",
     "location": "Philippines",
     "bio": (
         "I'm Brent (aka renthehuman), a software developer and systems tinkerer. "
-        "I dabbble a bit on game development, web apps (Django, Spring Boot), experiment with virtualization and GPU passthrough on Linux, "
-        "and enjoy debugging hardware/software issues such as Wi‑Fi drivers and system services (on my spare time)."
+        "I work on game development, android development, web apps (Django, Spring Boot), experiment with virtualization and GPU passthrough on Linux, "
+        "and enjoy debugging hardware/software issues such as Wi‑Fi drivers and system services(on my spare time)."
     ),
-    "email": "brenttolentino08@gmail.com",
-    "avatar": None,  # you can upload your own pfp here
+    "email": "johndoe@gmail.com",
+    "avatar": None,  # leave None so user can upload
 }
 
 SKILLS = [
@@ -81,40 +164,20 @@ SKILLS = [
     "GPU passthrough (vfio, PCI binding)",
     "Containers & systemd",
     "Troubleshooting (networking, drivers)",
-    "Game development (Roblox Lua)",
+    "Game development (Java, LibGDX, Roblox Lua)",
+    "Android development (Java, Android Studio)",
 ]
 
 PROJECTS = [
-    {
-        "title": "Geolocator (C#)",
-        "summary": "A project I made during the summer.",
-        "tags": ["C#", "Git", "Backend"],
-        "link": "https://github.com/BrentTolentino/Geolocator",
-    },
-    {
-        "title": "Calm Code (Android Studio)",
-        "summary": "An Android Studio application used for meditation and coding.",
-        "tags": ["Java", "Android Studio", "Mobile"],
-        "link": "https://github.com/BladeLucas27/CalmCode",
-    },
-    {
-        "title": "GPU Passthrough Lab",
-        "summary": "Experiments with passing through AMD Radeon 680M and NVIDIA RTX 3060 to Windows guests using vfio-pci and OVMF.",
-        "tags": ["QEMU/KVM", "vfio", "Windows"],
-        "link": "no link available",
-    },
-    {
-        "title": "Danny German (Pixel Game made in Java)",
-        "summary": "Investigated mt7921e behavior on Linux Mint; captured dmesg and troubleshooting notes.",
-        "tags": ["Linux", "Kernel", "Drivers"],
-        "link": "https://github.com/BrentTolentino/RPG_GAME",
-    },
+    { "title": "Geolocator (C#)", "summary": "A project I made during the summer.", "tags": ["C#", "Git", "Backend"], "link": "https://github.com/BrentTolentino/Geolocator", }, { "title": "Calm Code (Android Studio)", "summary": "An Android Studio application used for meditation and coding.", "tags": ["Java", "Android Studio", "Mobile"], "link": "https://github.com/BladeLucas27/CalmCode", }, { "title": "GPU Passthrough Lab", "summary": "Experiments with passing through AMD Radeon 680M and NVIDIA RTX 3060 to Windows guests using vfio-pci and OVMF.", "tags": ["QEMU/KVM", "vfio", "Windows"], "link": "no link available", }, { "title": "Danny German (Pixel Game made in Java)", "summary": "Created an Old School RPG game in Java.", "tags": ["Java", "Game Development"], "link": "https://github.com/BrentTolentino/RPG_GAME", },
 ]
 
 EXTRA = {
     "education": "BS Computer Science (active student/projects)",
-    "interests": ["OS internals", "virtualization", "web development", "system reliability"],
+    "interests": ["OS internals", "virtualization", "web development", "system reliability", "open source software", "gaming"],
 }
+
+# ----------------- UI -----------------
 
 with st.sidebar:
     st.image("https://static.streamlit.io/examples/dice.jpg", width=120)
@@ -128,6 +191,7 @@ with st.sidebar:
 
     st.markdown("**Quick actions**")
     if st.button("Download resume (MD)"):
+        # generate a simple markdown resume and trigger download
         md = textwrap.dedent(f"""
         # {USER['full_name']}
         @{USER['handle']} — {USER['location']}
